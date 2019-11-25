@@ -182,6 +182,7 @@ func main() {
 		}()
 
 	})
+	
 	resume := widget.NewButton("stop", func() {})
 
 	group2.Append(stop)

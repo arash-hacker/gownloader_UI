@@ -149,14 +149,21 @@ func Show(app fyne.App) {
 func main() {
 	a := app.New()
 	w := a.NewWindow("Example")
-	grid := fyne.NewContainerWithLayout(layout.NewGridLayout(2))
+	grid := fyne.NewContainerWithLayout(layout.NewGridLayout(4))
 	group2 := widget.NewGroup("Widgets")
-	stop:=widget.NewButton("text 1", func ()  { })
+	group3 := widget.NewGroup("Widgets")
+	
+  
+
+	stop:=widget.NewButton("text 3", func ()  { })
 	resume:=widget.NewButton("text 2", func ()  { })
 	group2.Append(stop)
 	group2.Append(resume)
+	group3.Resize(fyne.NewSize(50,800))
+	
 	grid.AddObject(group2)
-
+	grid.AddObject(group3)
+	
 	w.SetContent(grid)
 	w.ShowAndRun()
 }

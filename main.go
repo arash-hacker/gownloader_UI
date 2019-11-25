@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	g "gownloader/gownload"
+	"math/rand"
+	"time"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
@@ -65,7 +68,7 @@ func (c *calc) charButton(char rune) *widget.Button {
 
 func (c *calc) typedRune(r rune) {
 	if r == '=' {
-		
+
 		return
 	} else if r == 'c' {
 		c.clear()
@@ -80,7 +83,7 @@ func (c *calc) typedRune(r rune) {
 
 func (c *calc) typedKey(ev *fyne.KeyEvent) {
 	if ev.Name == fyne.KeyReturn || ev.Name == fyne.KeyEnter {
-		
+
 		return
 	}
 }
@@ -90,7 +93,7 @@ func (c *calc) loadUI(app fyne.App) {
 	c.output.Alignment = fyne.TextAlignTrailing
 	c.output.TextStyle.Monospace = true
 	equals := c.addButton("=", func() {
-		
+
 	})
 	equals.Style = widget.PrimaryButton
 
@@ -149,21 +152,47 @@ func Show(app fyne.App) {
 func main() {
 	a := app.New()
 	w := a.NewWindow("Example")
-	grid := fyne.NewContainerWithLayout(layout.NewGridLayout(4))
+
+	grid := fyne.NewContainerWithLayout(layout.NewGridLayout(2))
 	group2 := widget.NewGroup("Widgets")
 	group3 := widget.NewGroup("Widgets")
-	
-  
 
-	stop:=widget.NewButton("text 3", func ()  { })
-	resume:=widget.NewButton("text 2", func ()  { })
+	entry := widget.NewMultiLineEntry()
+	stop := widget.NewButton("download", func() {
+		group := widget.NewGroup((entry.Text)[:10])
+		//entry.Text=""
+		p := widget.NewProgressBar()
+		b := widget.NewButton("start/stop", func() {})
+		group.Append(p)
+		group.Append(b)
+		p.SetValue(rand.Float64())
+		group3.Append(group)
+		d := g.New(entry.Text)
+		d.Init(4)
+		b.Text = fmt.Sprintf("%d", d.GetSize())
+		go d.StartAll2()
+		tkr := time.NewTicker(100 * time.Millisecond)
+		go func() {
+			for {
+				select {
+				case <-tkr.C: 
+					p.SetValue(d.Check()/float64(d.GetSize()))
+				} 
+			}
+		}()
+
+	})
+	resume := widget.NewButton("stop", func() {})
+
 	group2.Append(stop)
 	group2.Append(resume)
-	group3.Resize(fyne.NewSize(50,800))
-	
+	group3.Resize(fyne.NewSize(50, 800))
+	entry.Resize(fyne.NewSize(50, 800))
+	group3.Append(entry)
+
 	grid.AddObject(group2)
 	grid.AddObject(group3)
-	
+
 	w.SetContent(grid)
 	w.ShowAndRun()
 }
